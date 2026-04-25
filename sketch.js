@@ -1,5 +1,5 @@
 let cols = 4;
-let rows = 4; // Changed to 4 for a 4x4 grid
+let rows = 4; // For a 4x4 grid
 let padding = 80;
 let topMargin = 160;
 let cells = [];
@@ -32,12 +32,12 @@ function drawHeader() {
   textFont('Inter');
   textSize(32);
   textStyle(BOLD);
-  text("CHROMAWEAVE", 0, 0);
+  text("chromaWeave", 0, 0);
   
   fill(120);
   textSize(12);
   textStyle(NORMAL);
-  text("TRANSFORMING SOUND INTO DIGITAL TAPESTRY", 0, 45);
+  text("GENERATIVE TRANSLATION OF SOUND INTO KINETIC TAPESTRIES", 0, 45);
   
   stroke(255, 25);
   strokeWeight(1);
