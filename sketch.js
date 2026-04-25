@@ -1,12 +1,7 @@
-/**
- * CHROMAWEAVE: Digital Tapestry Homepage
- * professional edits: Features motion easing, glow effects, and grid-wide routing.
- */
-
 let cols = 4;
-let rows = 5;
+let rows = 4; // Changed to 4 for a 4x4 grid
 let padding = 80;
-let topMargin = 160; // Increased for a cleaner header
+let topMargin = 160;
 let cells = [];
 
 function setup() {
@@ -15,16 +10,13 @@ function setup() {
 }
 
 function draw() {
-  // Deep obsidian background for professional contrast
-  background(5); 
+  background(5); // Solid obsidian black
   
   drawHeader();
   
-  // Set cursor based on interaction
   let isHovering = cells.some(cell => cell.isHovered);
   cursor(isHovering ? HAND : ARROW);
 
-  // Render the grid
   for (let cell of cells) {
     cell.update();
     cell.display();
@@ -36,21 +28,17 @@ function drawHeader() {
   textAlign(LEFT, TOP);
   translate(padding, 50);
   
-  // Primary Title
   fill(255);
-  textFont('Inter', 'Helvetica'); // Falls back to Helvetica if Inter isn't loaded
+  textFont('Inter');
   textSize(32);
   textStyle(BOLD);
-  text("chromaWeave", 0, 0);
+  text("CHROMAWEAVE", 0, 0);
   
-  // Subtitle / Description
   fill(120);
-  textSize(11);
+  textSize(12);
   textStyle(NORMAL);
-  textFont('JetBrains Mono', 'monospace');
-  text("TRANSFORMING SOUND INTO DIGITAL TAPESTRIES // V.2026.4", 0, 45);
+  text("TRANSFORMING SOUND INTO DIGITAL TAPESTRY", 0, 45);
   
-  // Decorative separator line
   stroke(255, 25);
   strokeWeight(1);
   line(0, 70, width - (padding * 2), 70);
@@ -64,7 +52,7 @@ function calculateGrid() {
   let cellW = gridW / cols;
   let cellH = gridH / rows;
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 16; i++) { // Loop restricted to 16
     let col = i % cols;
     let row = floor(i / cols);
     let x = padding + col * cellW;
@@ -86,17 +74,15 @@ class GridCell {
     this.id = id;
     this.link = link;
     this.isHovered = false;
-    this.hoverLerp = 0; // Used for smooth fading transitions
+    this.hoverLerp = 0;
     this.animTimer = 0;
   }
 
   update() {
-    // Check for hover
     let isInside = (mouseX > this.x && mouseX < this.x + this.w && 
                     mouseY > this.y && mouseY < this.y + this.h);
     this.isHovered = isInside;
 
-    // Smoothly transition the hover value (lerping)
     if (this.isHovered) {
       this.hoverLerp = lerp(this.hoverLerp, 1, 0.1);
       this.animTimer += 0.05;
@@ -109,43 +95,39 @@ class GridCell {
     push();
     translate(this.x, this.y);
     
-    // 1. Draw "Thread" Lines
-    for (let i = 30; i < this.w - 30; i += 10) {
-      let threadHue = (this.id * 22 + i) % 360;
+    // Render Neon Threads
+    for (let i = 35; i < this.w - 35; i += 12) {
+      let threadHue = (this.id * 25 + i) % 360;
       colorMode(HSB, 360, 100, 100, 1);
       
-      // Calculate sine wave movement based on hover lerp
-      let wave = sin(this.animTimer + i * 0.2) * (15 * this.hoverLerp);
-      let opacity = map(this.hoverLerp, 0, 1, 0.15, 0.9);
+      let wave = sin(this.animTimer + i * 0.25) * (18 * this.hoverLerp);
+      let opacity = map(this.hoverLerp, 0, 1, 0.15, 0.95);
       
-      // Add neon glow ONLY on hover
       if (this.hoverLerp > 0.1) {
-        drawingContext.shadowBlur = 12 * this.hoverLerp;
+        drawingContext.shadowBlur = 15 * this.hoverLerp;
         drawingContext.shadowColor = color(threadHue, 80, 100, 0.5);
       }
 
-      stroke(threadHue, 75, 100, opacity);
-      strokeWeight(map(this.hoverLerp, 0, 1, 1, 2));
-      line(i, 35 + wave, i, this.h - 35 - wave);
+      stroke(threadHue, 70, 100, opacity);
+      strokeWeight(map(this.hoverLerp, 0, 1, 1, 2.5));
+      line(i, 40 + wave, i, this.h - 40 - wave);
       
-      // Reset glow for performance
       drawingContext.shadowBlur = 0;
     }
 
-    // Minimal Grid Border
+    // Border
     noFill();
     stroke(255, map(this.hoverLerp, 0, 1, 30, 180));
     strokeWeight(1);
     rect(15, 15, this.w - 30, this.h - 30, 2);
     
-    // Technical ID Label (V.01, V.02, etc)
-    fill(255, map(this.hoverLerp, 0, 1, 100, 255));
+    // Variation Title
+    fill(255, map(this.hoverLerp, 0, 1, 120, 255));
     noStroke();
-    textFont('JetBrains Mono', 'monospace');
-    textSize(10);
+    textFont('Inter');
+    textSize(11);
     textAlign(LEFT);
-    let idLabel = this.id.toString().padStart(2, '0');
-    text(`V.${idLabel}`, 25, this.h - 25);
+    text(`VARIATION ${this.id}`, 25, this.h - 25);
     
     pop();
   }
