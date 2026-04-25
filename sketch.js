@@ -10,8 +10,7 @@ function setup() {
 }
 
 function draw() {
-  clear(); // Maintain transparency
-  
+background(0); // This MUST be here to keep the background black  
   // Header
   textAlign(CENTER, CENTER);
   fill(255); 
