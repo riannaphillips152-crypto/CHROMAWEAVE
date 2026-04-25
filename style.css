@@ -4,11 +4,12 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    /* Strict obsidian background */
     background-color: #050505 !important;
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Prevents pull-to-refresh on mobile */
+    touch-action: none; 
 }
 
 canvas {
