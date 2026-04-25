@@ -1,7 +1,12 @@
+/**
+ * CHROMAWEAVE: Digital Tapestry Homepage
+ * professional edits: Features motion easing, glow effects, and grid-wide routing.
+ */
+
 let cols = 4;
 let rows = 5;
-let padding = 60;
-let topMargin = 120;
+let padding = 80;
+let topMargin = 160; // Increased for a cleaner header
 let cells = [];
 
 function setup() {
@@ -10,28 +15,46 @@ function setup() {
 }
 
 function draw() {
-background(0); // This MUST be here to keep the background black  
-  // Header
-  textAlign(CENTER, CENTER);
-  fill(255); 
-  textSize(32);
-  textStyle(BOLD);
-  text("chromaWeave", width / 2, 40);
+  // Deep obsidian background for professional contrast
+  background(5); 
   
-  textSize(14);
-  textStyle(ITALIC);
-  fill(200);
-  text("Transforming audio into digital tapestries", width / 2, 70);
+  drawHeader();
   
-  // Update cursor if hovering over any clickable cell
+  // Set cursor based on interaction
   let isHovering = cells.some(cell => cell.isHovered);
   cursor(isHovering ? HAND : ARROW);
 
-  // Render Grid
+  // Render the grid
   for (let cell of cells) {
     cell.update();
     cell.display();
   }
+}
+
+function drawHeader() {
+  push();
+  textAlign(LEFT, TOP);
+  translate(padding, 50);
+  
+  // Primary Title
+  fill(255);
+  textFont('Inter', 'Helvetica'); // Falls back to Helvetica if Inter isn't loaded
+  textSize(32);
+  textStyle(BOLD);
+  text("chromaWeave", 0, 0);
+  
+  // Subtitle / Description
+  fill(120);
+  textSize(11);
+  textStyle(NORMAL);
+  textFont('JetBrains Mono', 'monospace');
+  text("TRANSFORMING SOUND INTO DIGITAL TAPESTRIES // V.2026.4", 0, 45);
+  
+  // Decorative separator line
+  stroke(255, 25);
+  strokeWeight(1);
+  line(0, 70, width - (padding * 2), 70);
+  pop();
 }
 
 function calculateGrid() {
@@ -47,7 +70,6 @@ function calculateGrid() {
     let x = padding + col * cellW;
     let y = topMargin + row * cellH;
     
-    // Each cell gets a unique ID and its own variation link
     let id = i + 1;
     let targetLink = `./variation-${id}.html`;
     
@@ -64,46 +86,67 @@ class GridCell {
     this.id = id;
     this.link = link;
     this.isHovered = false;
+    this.hoverLerp = 0; // Used for smooth fading transitions
     this.animTimer = 0;
   }
 
   update() {
-    this.isHovered = (mouseX > this.x && mouseX < this.x + this.w && 
-                      mouseY > this.y && mouseY < this.y + this.h);
-    if (this.isHovered) this.animTimer += 0.08;
+    // Check for hover
+    let isInside = (mouseX > this.x && mouseX < this.x + this.w && 
+                    mouseY > this.y && mouseY < this.y + this.h);
+    this.isHovered = isInside;
+
+    // Smoothly transition the hover value (lerping)
+    if (this.isHovered) {
+      this.hoverLerp = lerp(this.hoverLerp, 1, 0.1);
+      this.animTimer += 0.05;
+    } else {
+      this.hoverLerp = lerp(this.hoverLerp, 0, 0.1);
+    }
   }
 
   display() {
     push();
     translate(this.x, this.y);
     
-    // Animated Colorful Threads
-    strokeWeight(1.5);
-    for (let i = 20; i < this.w - 20; i += 8) {
-      let threadHue = (this.id * 18 + i) % 360;
-      push();
+    // 1. Draw "Thread" Lines
+    for (let i = 30; i < this.w - 30; i += 10) {
+      let threadHue = (this.id * 22 + i) % 360;
       colorMode(HSB, 360, 100, 100, 1);
       
-      let offset = this.isHovered ? sin(this.animTimer + i * 0.3) * 10 : 0;
-      let opacity = this.isHovered ? 1 : 0.2;
+      // Calculate sine wave movement based on hover lerp
+      let wave = sin(this.animTimer + i * 0.2) * (15 * this.hoverLerp);
+      let opacity = map(this.hoverLerp, 0, 1, 0.15, 0.9);
       
-      stroke(threadHue, 80, 100, opacity);
-      line(i, 25 + offset, i, this.h - 25 - offset);
-      pop();
+      // Add neon glow ONLY on hover
+      if (this.hoverLerp > 0.1) {
+        drawingContext.shadowBlur = 12 * this.hoverLerp;
+        drawingContext.shadowColor = color(threadHue, 80, 100, 0.5);
+      }
+
+      stroke(threadHue, 75, 100, opacity);
+      strokeWeight(map(this.hoverLerp, 0, 1, 1, 2));
+      line(i, 35 + wave, i, this.h - 35 - wave);
+      
+      // Reset glow for performance
+      drawingContext.shadowBlur = 0;
     }
 
-    // Border
+    // Minimal Grid Border
     noFill();
-    stroke(this.isHovered ? 255 : 80, 150);
-    strokeWeight(this.isHovered ? 2 : 1);
-    rect(10, 10, this.w - 20, this.h - 20, 4);
+    stroke(255, map(this.hoverLerp, 0, 1, 30, 180));
+    strokeWeight(1);
+    rect(15, 15, this.w - 30, this.h - 30, 2);
     
-    // Variation Title
-    fill(255);
+    // Technical ID Label (V.01, V.02, etc)
+    fill(255, map(this.hoverLerp, 0, 1, 100, 255));
     noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(13);
-    text(`VARIATION ${this.id}`, this.w / 2, this.h / 2);
+    textFont('JetBrains Mono', 'monospace');
+    textSize(10);
+    textAlign(LEFT);
+    let idLabel = this.id.toString().padStart(2, '0');
+    text(`V.${idLabel}`, 25, this.h - 25);
+    
     pop();
   }
 
