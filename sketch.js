@@ -1,7 +1,6 @@
-let cols = 4;
-let rows = 4; // 16 variations total
-let padding = 80;
-let topMargin = 160;
+let cols, rows;
+let padding;
+let topMargin;
 let cells = [];
 
 function setup() {
@@ -10,8 +9,7 @@ function setup() {
 }
 
 function draw() {
-  background(5); // obsidian black
-  
+  background(5); 
   drawHeader();
   
   let isHovering = cells.some(cell => cell.isHovered);
@@ -24,29 +22,48 @@ function draw() {
 }
 
 function drawHeader() {
+  // Scale header based on width
+  let titleSize = width < 600 ? 24 : 32;
+  let subSize = width < 600 ? 9 : 12;
+  
   push();
   textAlign(LEFT, TOP);
-  translate(padding, 50);
+  translate(padding, height * 0.05); // Responsive top placement
   
   fill(255);
   textFont('Inter');
-  textSize(32);
+  textSize(titleSize);
   textStyle(BOLD);
   text("chromaWeave", 0, 0);
   
   fill(120);
-  textSize(12);
+  textSize(subSize);
   textStyle(NORMAL);
-  text("GENERATIVE TRANSLATION OF SOUND INTO KINETIC TAPESTRIES", 0, 45);
+  let subText = width < 600 ? "KINETIC AUDIO TAPESTRIES" : "GENERATIVE TRANSLATION OF SOUND INTO KINETIC TAPESTRIES";
+  text(subText, 0, titleSize + 10);
   
   stroke(255, 25);
   strokeWeight(1);
-  line(0, 70, width - (padding * 2), 70);
+  line(0, titleSize + 35, width - (padding * 2), titleSize + 35);
   pop();
 }
 
 function calculateGrid() {
   cells = [];
+  
+  // Mobile vs Web Logic
+  if (width < 600) {
+    cols = 2;
+    rows = 8;
+    padding = 30; // Tighter padding for small screens
+    topMargin = 120;
+  } else {
+    cols = 4;
+    rows = 4;
+    padding = 80;
+    topMargin = 160;
+  }
+
   let gridW = width - (padding * 2);
   let gridH = height - topMargin - padding;
   let cellW = gridW / cols;
@@ -59,7 +76,6 @@ function calculateGrid() {
     let y = topMargin + row * cellH;
     
     let id = i + 1;
-    // Formats ID to double digits (e.g., 1 becomes "01")
     let formattedId = nf(id, 2); 
     let targetLink = `https://riannaphillips152-crypto.github.io/variation_${formattedId}/`;
     
@@ -81,6 +97,7 @@ class GridCell {
   }
 
   update() {
+    // Touch and Mouse support
     let isInside = (mouseX > this.x && mouseX < this.x + this.w && 
                     mouseY > this.y && mouseY < this.y + this.h);
     this.isHovered = isInside;
@@ -97,47 +114,40 @@ class GridCell {
     push();
     translate(this.x, this.y);
     
-    // Render Neon Threads
-    for (let i = 35; i < this.w - 35; i += 12) {
+    //  thread density for mobile
+    let step = width < 600 ? 10 : 12;
+    let sidePadding = width < 600 ? 20 : 35;
+
+    for (let i = sidePadding; i < this.w - sidePadding; i += step) {
       let threadHue = (this.id * 25 + i) % 360;
       colorMode(HSB, 360, 100, 100, 1);
-      
-      let wave = sin(this.animTimer + i * 0.25) * (18 * this.hoverLerp);
+      let wave = sin(this.animTimer + i * 0.25) * (15 * this.hoverLerp);
       let opacity = map(this.hoverLerp, 0, 1, 0.15, 0.95);
       
       if (this.hoverLerp > 0.1) {
-        drawingContext.shadowBlur = 15 * this.hoverLerp;
+        drawingContext.shadowBlur = 10 * this.hoverLerp;
         drawingContext.shadowColor = color(threadHue, 80, 100, 0.5);
       }
 
       stroke(threadHue, 70, 100, opacity);
-      strokeWeight(map(this.hoverLerp, 0, 1, 1, 2.5));
-      line(i, 40 + wave, i, this.h - 40 - wave);
-      
+      strokeWeight(map(this.hoverLerp, 0, 1, 1, 2));
+      line(i, 30 + wave, i, this.h - 30 - wave);
       drawingContext.shadowBlur = 0;
     }
 
-    // Cell Border
     noFill();
     stroke(255, map(this.hoverLerp, 0, 1, 30, 180));
-    strokeWeight(1);
-    rect(15, 15, this.w - 30, this.h - 30, 2);
+    rect(10, 10, this.w - 20, this.h - 20, 2);
     
-    // Variation Title
     fill(255, map(this.hoverLerp, 0, 1, 120, 255));
     noStroke();
-    textFont('Inter');
-    textSize(11);
-    textAlign(LEFT);
-    text(`VARIATION ${nf(this.id, 2)}`, 25, this.h - 25);
-    
+    textSize(width < 600 ? 9 : 11);
+    text(`VARIATION ${nf(this.id, 2)}`, 20, this.h - 20);
     pop();
   }
 
   clicked() {
-    if (this.isHovered) {
-      window.location.href = this.link;
-    }
+    if (this.isHovered) window.location.href = this.link;
   }
 }
 
@@ -147,6 +157,7 @@ function mousePressed() {
   }
 }
 
+// Mobile rotation or browser resizing
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   calculateGrid();
