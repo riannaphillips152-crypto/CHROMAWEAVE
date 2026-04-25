@@ -1,5 +1,5 @@
 let cols = 4;
-let rows = 4; 
+let rows = 4; // 16 variations total
 let padding = 80;
 let topMargin = 160;
 let cells = [];
@@ -10,11 +10,10 @@ function setup() {
 }
 
 function draw() {
-  background(5); // Obsidian Black
+  background(5); // obsidian black
   
   drawHeader();
   
-  // Change cursor to pointer when hovering over any cell
   let isHovering = cells.some(cell => cell.isHovered);
   cursor(isHovering ? HAND : ARROW);
 
@@ -60,11 +59,8 @@ function calculateGrid() {
     let y = topMargin + row * cellH;
     
     let id = i + 1;
-    
-    // GITHUB FIX: Standardize ID to 01, 02... 16
+    // Formats ID to double digits (e.g., 1 becomes "01")
     let formattedId = nf(id, 2); 
-    
-    // Links to your specific GitHub variations
     let targetLink = `https://riannaphillips152-crypto.github.io/variation_${formattedId}/`;
     
     cells.push(new GridCell(x, y, cellW, cellH, id, targetLink));
@@ -101,7 +97,7 @@ class GridCell {
     push();
     translate(this.x, this.y);
     
-    // Procedural Neon Threads
+    // Render Neon Threads
     for (let i = 35; i < this.w - 35; i += 12) {
       let threadHue = (this.id * 25 + i) % 360;
       colorMode(HSB, 360, 100, 100, 1);
@@ -127,7 +123,7 @@ class GridCell {
     strokeWeight(1);
     rect(15, 15, this.w - 30, this.h - 30, 2);
     
-    // Label using the formatted ID (e.g. VARIATION 01)
+    // Variation Title
     fill(255, map(this.hoverLerp, 0, 1, 120, 255));
     noStroke();
     textFont('Inter');
