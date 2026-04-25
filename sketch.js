@@ -1,5 +1,5 @@
 let cols = 4;
-let rows = 4; // For a 4x4 grid
+let rows = 4; // 16 variations total
 let padding = 80;
 let topMargin = 160;
 let cells = [];
@@ -10,7 +10,7 @@ function setup() {
 }
 
 function draw() {
-  background(5); // Solid obsidian black
+  background(5); // obsidian black
   
   drawHeader();
   
@@ -52,14 +52,16 @@ function calculateGrid() {
   let cellW = gridW / cols;
   let cellH = gridH / rows;
 
-  for (let i = 0; i < 16; i++) { // Loop restricted to 16
+  for (let i = 0; i < 16; i++) {
     let col = i % cols;
     let row = floor(i / cols);
     let x = padding + col * cellW;
     let y = topMargin + row * cellH;
     
     let id = i + 1;
-    let targetLink = `./variation-${id}.html`;
+    // Formats ID to double digits (e.g., 1 becomes "01")
+    let formattedId = nf(id, 2); 
+    let targetLink = `https://riannaphillips152-crypto.github.io/variation_${formattedId}/`;
     
     cells.push(new GridCell(x, y, cellW, cellH, id, targetLink));
   }
@@ -115,7 +117,7 @@ class GridCell {
       drawingContext.shadowBlur = 0;
     }
 
-    // Border
+    // Cell Border
     noFill();
     stroke(255, map(this.hoverLerp, 0, 1, 30, 180));
     strokeWeight(1);
@@ -127,7 +129,7 @@ class GridCell {
     textFont('Inter');
     textSize(11);
     textAlign(LEFT);
-    text(`VARIATION ${this.id}`, 25, this.h - 25);
+    text(`VARIATION ${nf(this.id, 2)}`, 25, this.h - 25);
     
     pop();
   }
