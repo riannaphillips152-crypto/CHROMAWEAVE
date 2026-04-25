@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: transparent; /* Transparent background as requested */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+canvas {
+  display: block;
+}
