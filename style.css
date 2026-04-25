@@ -2,8 +2,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: transparent; /* Transparent background as requested */
-  display: flex;
+background-color: #000000; /* Solid black background */  display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
