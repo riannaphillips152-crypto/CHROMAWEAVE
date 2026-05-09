@@ -15,3 +15,18 @@ html, body {
 canvas {
     display: block;
 }
+
+/* New Copyright Footer Styling */
+#copyright {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #787878; /* Muted grey to blend with the dark theme */
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    pointer-events: none; /* Allows clicks to pass through to the canvas */
+    z-index: 10;
+}
